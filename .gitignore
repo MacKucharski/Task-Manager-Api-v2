@@ -1,0 +1,10 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# database
+*.sqlite
+*.db
+
+# Environments
+.env
+.venv
