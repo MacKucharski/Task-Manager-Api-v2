@@ -2,40 +2,40 @@
 
 from api import api
 from api.logic import TaskLogic
-from flask import request
+from flask import request, jsonify
 
 @api.route("/api/tasks/<int:id>", methods = ["GET"])
 def get_task(id):
     """Retrieve a task by id"""
-    response, status = TaskLogic.get_task(id)
-    return response, status
+    task = TaskLogic.get_task(id)
+    return jsonify(task.to_dict()), 200
 
 @api.route("/api/tasks", methods = ["GET"])
 def get_tasks():
     """Retrieve list of tasks by query params"""
     params = request.args.to_dict()
-    response, status = TaskLogic.get_tasks(params)
-    return response, status
+    tasks = TaskLogic.get_tasks(params)
+    return jsonify([task.to_dict() for task in tasks]), 200
 
 @api.route("/api/tasks", methods = ["POST"])
 def new_task():
     """Create a new task"""
     if not request.is_json:
-        return {"error": "Invalid content type"}, 415
+        return jsonify({"error": "Invalid content type"}), 415
     
     payload = request.json
-    response, status = TaskLogic.new_task(payload)
-    return response, status
+    task = TaskLogic.new_task(payload)
+    return jsonify(task.to_dict()), 201
 
 @api.route("/api/tasks/<int:id>", methods = ["PUT"])
 def update_task(id):
     """Edit a task"""   
     if not request.is_json:
-        return {"error": "Invalid content type"}, 415
+        return jsonify({"error": "Invalid content type"}), 415
     
     payload = request.json
-    response, status = TaskLogic.update_task(id, payload)
-    return response, status
+    task = TaskLogic.update_task(id, payload)
+    return jsonify(task.to_dict()), 200
 
 @api.route("/api/tasks/<int:id>", methods = ["DELETE"])
 def delete_task(id):

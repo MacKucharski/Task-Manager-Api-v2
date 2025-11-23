@@ -6,12 +6,15 @@ from sqlalchemy import orm as so
 
 from api import db
 
+
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
     REGULAR = "regular"
 
+
 class IDMixin:
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
+
 
 class User(IDMixin, db.Model):
 
@@ -26,6 +29,14 @@ class User(IDMixin, db.Model):
 
     def __repr__(self) -> str:
         return "<User {}>".format(self.email)
+    
+    def to_dict(self):
+        return {
+            "id" : self.id,
+            "email" : self.email,
+            "role" : self.role,
+        }
+
 
 class TaskStatus(str, enum.Enum):
     NEW = "new"
@@ -33,6 +44,7 @@ class TaskStatus(str, enum.Enum):
     FINISHED = "finished"
     CANCELED = "canceled"
     ON_HOLD = "on_hold"
+
 
 class Task(IDMixin, db.Model):
 
@@ -49,3 +61,12 @@ class Task(IDMixin, db.Model):
 
     def __repr__(self) -> str:
         return "<Task object. Project: {}, name: {}, status: {}, assignee: {}>".format(self.project, self.name, self.status, self.assigned_to_id)
+    
+    def to_dict(self):
+        return {
+            "id" : self.id,
+            "project" : self.project,
+            "status" : self.status,
+            "created by" : self.created_by_id,
+            "assigned to" : self.assigned_to_id
+        }

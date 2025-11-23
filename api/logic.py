@@ -1,47 +1,82 @@
 # business logic operating on User and Task objects
 
-MOCK_TASKS_LIST = {
-    "tasks": [
-    {"id": "1", "description": "Task 1", "status": "in progress"},
-    {"id": "2", "description": "Task 2", "status": "completed"},
-    {"id": "3", "description": "Task 3", "status": "new"},
-    {"id": "4", "description": "Task 4", "status": "new"},
-    {"id": "5", "description": "Task 5", "status": "in progress"},
-    {"id": "6", "description": "Task 6", "status": "in progress"},
-    {"id": "7", "description": "Task 7", "status": "canceled"}
-    ]}
+import sqlalchemy as sa
+
+from api import db
+from api.models import User, Task
 
 
 class TaskLogic:
 
     @staticmethod
     def new_task(payload):
-        return "Not implemented", 200
+        """Create new task"""
+        task = Task(**payload)
+        db.session.add(task)
+        db.session.commit()
+        return task
     
     @staticmethod
     def get_task(id):
-        return [task for task in MOCK_TASKS_LIST["tasks"] if task["id"] == id], 200
+        """Get task by id"""
+        return db.get_or_404(Task, id)
     
     @staticmethod
     def get_tasks(params):
-        # filtering to be implemented
-        return MOCK_TASKS_LIST, 200
+        """Get all tasks according to filters"""
+
+        condition = [getattr(Task, key) == value for key, value in params.items()]
+        query = sa.select(Task).where(*condition)
+        tasks = db.session.scalars(query).all()
+        return tasks
 
     @staticmethod
     def update_task(id, payload):
-        return "Not implemented", 200
+        """Update task according to params"""
+        task = db.get_or_404(Task, id)
+        for key, value in payload:
+            setattr(task, key, value)
+        db.session.commit()
+        return task
 
     @staticmethod
     def delete_task(id):
-        return "Not implemented", 200
+        """Delete task by id"""
+        task = db.get_or_404(Task, id)
+        db.session.delete(task)
+        db.session.commit()
 
 
 class UserLogic:
+    
+    #all methods require admin rights
+
+    @staticmethod
+    def new_user(payload):
+        """Create new user"""
+        pass
 
     @staticmethod
     def get_users():
+        """Get all users"""
         pass
     
     @staticmethod
     def get_user(id):
+        """Get user by id"""
+        pass
+
+    @staticmethod
+    def delete_user(email):
+        """Delete user by email"""
+        pass
+
+    @staticmethod
+    def upgrade_user(email):
+        """Grant user admin rights"""
+        pass
+
+    @staticmethod
+    def downgrade_user(email):
+        """Change user from admin to regular"""
         pass
