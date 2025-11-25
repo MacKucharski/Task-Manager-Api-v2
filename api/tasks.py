@@ -1,23 +1,26 @@
-# routes related to Task objects
+from flask import request, jsonify
 
 from api import api
 from api.logic import TaskLogic
-from flask import request, jsonify
+from api.auth import token_auth
 
 @api.route("/api/tasks/<int:id>", methods = ["GET"])
+@token_auth.login_required
 def get_task(id):
     """Retrieve a task by id"""
     task = TaskLogic.get_task(id)
     return jsonify(task.to_dict()), 200
 
 @api.route("/api/tasks", methods = ["GET"])
+@token_auth.login_required
 def get_tasks():
     """Retrieve list of tasks by query params"""
     params = request.args.to_dict()
     tasks = TaskLogic.get_tasks(params)
-    return jsonify([task.to_dict() for task in tasks]), 200
+    return jsonify({"items" : [task.to_dict() for task in tasks]}), 200
 
 @api.route("/api/tasks", methods = ["POST"])
+@token_auth.login_required
 def new_task():
     """Create a new task"""
     if not request.is_json:
@@ -28,6 +31,7 @@ def new_task():
     return jsonify(task.to_dict()), 201
 
 @api.route("/api/tasks/<int:id>", methods = ["PUT"])
+@token_auth.login_required
 def update_task(id):
     """Edit a task"""   
     if not request.is_json:
@@ -38,6 +42,7 @@ def update_task(id):
     return jsonify(task.to_dict()), 200
 
 @api.route("/api/tasks/<int:id>", methods = ["DELETE"])
+@token_auth.login_required
 def delete_task(id):
     """Delete a task"""
     TaskLogic.delete_task(id)

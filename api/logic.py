@@ -1,10 +1,7 @@
-# business logic operating on User and Task objects
-
 import sqlalchemy as sa
 
 from api import db
 from api.models import User, Task
-
 
 class TaskLogic:
 
@@ -34,7 +31,7 @@ class TaskLogic:
     def update_task(id, payload):
         """Update task according to params"""
         task = db.get_or_404(Task, id)
-        for key, value in payload:
+        for key, value in payload.items():
             setattr(task, key, value)
         db.session.commit()
         return task
@@ -45,7 +42,6 @@ class TaskLogic:
         task = db.get_or_404(Task, id)
         db.session.delete(task)
         db.session.commit()
-
 
 class UserLogic:
     
