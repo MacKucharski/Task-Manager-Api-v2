@@ -26,8 +26,9 @@ def new_task():
     if not request.is_json:
         return jsonify({"error": "Invalid content type"}), 415
     
+    user = token_auth.current_user()
     payload = request.json
-    task = TaskLogic.new_task(payload)
+    task = TaskLogic.new_task(payload, user)
     return jsonify(task.to_dict()), 201
 
 @api.route("/api/tasks/<int:id>", methods = ["PUT"])
