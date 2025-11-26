@@ -6,8 +6,9 @@ from api.models import User, Task
 class TaskLogic:
 
     @staticmethod
-    def new_task(payload):
+    def new_task(payload, user):
         """Create new task"""
+        payload["created_by_id"] = user.id
         task = Task(**payload)
         db.session.add(task)
         db.session.commit()
