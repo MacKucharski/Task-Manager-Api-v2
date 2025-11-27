@@ -22,7 +22,6 @@ class TaskLogic:
     @staticmethod
     def get_tasks(params):
         """Get all tasks according to filters"""
-
         condition = [getattr(Task, key) == value for key, value in params.items()]
         query = sa.select(Task).where(*condition)
         tasks = db.session.scalars(query).all()

@@ -1,9 +1,9 @@
-from typing import Optional
-import enum
 from datetime import datetime, timedelta, timezone
+import enum
 import secrets
 import sqlalchemy as sa
 from sqlalchemy import orm as so
+from typing import Optional
 
 from api import db
 
