@@ -7,6 +7,7 @@ class TaskQuerySchema(BaseModel):
     project: Optional[str] = Field(None, max_length=80)
     name : Optional[str] = Field(None, max_length=80)
     status: Optional[TaskStatus] = None
+    created_by_id: Optional[int] = None
     assigned_to_id: Optional[int] = None
 
 class TaskCreateSchema(BaseModel):

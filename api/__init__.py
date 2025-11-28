@@ -9,4 +9,4 @@ api.config.from_object(Config)
 db = SQLAlchemy(api)
 migrate = Migrate(api, db)
 
-from api import tasks, models, tokens
+from api import errors, models, tokens, tasks

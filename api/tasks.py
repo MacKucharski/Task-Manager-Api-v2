@@ -10,7 +10,8 @@ from api.schemas import TaskQuerySchema, TaskCreateSchema, TaskUpdateSchema
 @token_auth.login_required
 def get_task(id):
     """Retrieve a task by id"""
-    task = TaskLogic.get_task(id)
+    user = token_auth.current_user()
+    task = TaskLogic.get_task(id, user)
     return jsonify({"data" : task.to_dict()}), 200
 
 @api.route("/api/tasks", methods = ["GET"])
@@ -18,8 +19,9 @@ def get_task(id):
 @validate()
 def get_tasks(query: TaskQuerySchema):
     """Retrieve list of tasks by query params"""
+    user = token_auth.current_user()
     params = query.model_dump(exclude_none=True)
-    tasks = TaskLogic.get_tasks(params)
+    tasks = TaskLogic.get_tasks(params, user)
     return jsonify({"data" : [task.to_dict() for task in tasks]}), 200
 
 @api.route("/api/tasks", methods = ["POST"])
@@ -37,13 +39,15 @@ def new_task(body: TaskCreateSchema):
 @validate()
 def update_task(id, body: TaskUpdateSchema):
     """Edit a task"""
+    user = token_auth.current_user()
     payload = body.model_dump(exclude_none=True)
-    task = TaskLogic.update_task(id, payload)
+    task = TaskLogic.update_task(id, payload, user)
     return jsonify(task.to_dict()), 200
 
 @api.route("/api/tasks/<int:id>", methods = ["DELETE"])
 @token_auth.login_required
 def delete_task(id):
     """Delete a task"""
-    TaskLogic.delete_task(id)
+    user = token_auth.current_user()
+    TaskLogic.delete_task(id, user)
     return "", 204
